@@ -51,7 +51,7 @@ export const createNewOrder = async (req, res) => {
       }
     };
     const uid = await checkForUniqueOrderId();
-    const sql3 = `SELECT uid, name, kaspi_token FROM users WHERE id = ${id}`;
+    const sql3 = `SELECT uid, name, kaspi_token, permission FROM users WHERE id = ${id}`;
     const {
       uid: manager,
       name: managerName,
