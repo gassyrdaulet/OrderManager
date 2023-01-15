@@ -56,7 +56,12 @@ export const createNewOrder = async (req, res) => {
       uid: manager,
       name: managerName,
       kaspi_token,
+      permission,
     } = (await conn.query(sql3))[0][0];
+    if (permission) {
+      await conn.end();
+      return res.status(400).json({ message: "Ошибка! Отказано в доступе." });
+    }
     if (is_kaspi === "true") {
       const orders = await getOrders(user_uid, managerName, kaspi_token);
       if (orders.length === 0) {
