@@ -58,7 +58,7 @@ export const createNewOrder = async (req, res) => {
       kaspi_token,
       permission,
     } = (await conn.query(sql3))[0][0];
-    if (permission) {
+    if (permission === "false") {
       await conn.end();
       return res.status(400).json({ message: "Ошибка! Отказано в доступе." });
     }
