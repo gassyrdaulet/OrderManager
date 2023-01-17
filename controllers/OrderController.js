@@ -89,7 +89,8 @@ export const createNewOrder = async (req, res) => {
             delivery_price_for_customer: 0,
             sum: order.attributes.totalPrice,
             status: "NEW",
-            creation_date: new Date(order.attributes.creationDate),
+            // order.attributes.creationDate
+            creation_date: new Date(),
             manager: user_uid,
             is_kaspi: "true",
             order_id: order.id,
@@ -310,6 +311,8 @@ export const acceptOrder = async (req, res) => {
     const sql1 = `UPDATE orders SET status = "INDLVR", deliver = ${deliver} WHERE ?`;
     const sql2 = `UPDATE orders SET status = "INPICKUP" WHERE ?`;
     const sql3 = `SELECT status, is_pickup FROM orders WHERE ?`;
+    const sql4 = `SELECT uid FROM users WHERE uid = ${deliver}`;
+    const deliverCheck = (await conn.query(sql4))[0][0];
     let success = 0;
     await Promise.all(
       uids.map(async (item) => {
@@ -317,8 +320,10 @@ export const acceptOrder = async (req, res) => {
           await conn.query(sql3, { uid: item })
         )[0][0];
         if (status === "NEW" && is_pickup === "false") {
-          await conn.query(sql1, { uid: item });
-          success++;
+          if (deliverCheck?.uid) {
+            await conn.query(sql1, { uid: item });
+            success++;
+          }
         } else if (status === "NEW" && is_pickup === "true") {
           await conn.query(sql2, { uid: item });
           success++;
@@ -326,6 +331,9 @@ export const acceptOrder = async (req, res) => {
       })
     );
     await conn.end();
+    if (success === 0) {
+      return res.status(400).json({ message: "Ошибка!" });
+    }
     res.status(200).json({ message: `(${success})` });
   } catch (e) {
     res.status(500).json({ message: "Ошибка сервера: " + e });
