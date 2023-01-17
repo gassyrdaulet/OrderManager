@@ -311,7 +311,7 @@ export const acceptOrder = async (req, res) => {
     const sql1 = `UPDATE orders SET status = "INDLVR", deliver = ${deliver} WHERE ?`;
     const sql2 = `UPDATE orders SET status = "INPICKUP" WHERE ?`;
     const sql3 = `SELECT status, is_pickup FROM orders WHERE ?`;
-    const sql4 = `SELECT uid FROM users WHERE uid = ${deliver}`;
+    const sql4 = `SELECT * FROM users WHERE uid = ${deliver}`;
     const deliverCheck = (await conn.query(sql4))[0][0];
     let success = 0;
     await Promise.all(
