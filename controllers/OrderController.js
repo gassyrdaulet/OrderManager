@@ -311,7 +311,7 @@ export const acceptOrder = async (req, res) => {
     const sql1 = `UPDATE orders SET status = "INDLVR", deliver = ${deliver} WHERE ?`;
     const sql2 = `UPDATE orders SET status = "INPICKUP" WHERE ?`;
     const sql3 = `SELECT status, is_pickup FROM orders WHERE ?`;
-    const sql4 = `SELECT * FROM users WHERE uid = ${deliver}`;
+    const sql4 = `SELECT * FROM users WHERE uid = "${deliver}"`;
     const deliverCheck = (await conn.query(sql4))[0][0];
     let success = 0;
     await Promise.all(
@@ -332,7 +332,9 @@ export const acceptOrder = async (req, res) => {
     );
     await conn.end();
     if (success === 0) {
-      return res.status(400).json({ message: "Ошибка!" });
+      return res
+        .status(400)
+        .json({ message: "Ошибка! Возможно вы не выбрали курьера." });
     }
     res.status(200).json({ message: `(${success})` });
   } catch (e) {
