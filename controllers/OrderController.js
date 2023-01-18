@@ -283,7 +283,7 @@ export const getOrder = async (req, res) => {
 
 export const getDelivers = async (req, res) => {
   try {
-    const sql1 = `SELECT * FROM users WHERE permission = "true"`;
+    const sql1 = `SELECT * FROM users WHERE deliver = "true"`;
     const conn = await mysql.createConnection(
       production ? dataBaseConfigProduction : dataBaseConfig
     );
