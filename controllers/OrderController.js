@@ -186,10 +186,14 @@ export const getAllOrders = async (req, res) => {
     const { status } = req.body;
     const { id } = req.user;
     const sql1 = `SELECT * FROM orders WHERE status = "${status}"`;
-    const sql2 = `SELECT uid FROM users WHERE id = ${id}`;
+    const sql2 = `SELECT uid, permission FROM users WHERE id = ${id}`;
     const conn = await mysql.createConnection(
       production ? dataBaseConfigProduction : dataBaseConfig
     );
+    const permission = (await conn.query(sql2))[0][0]["permission"];
+    if (permission === "false") {
+      return res.status(403).json({ message: "Отказано в доступе!" });
+    }
     if (status === "MYDLVRS") {
       const deliver = (await conn.query(sql2))[0][0]["uid"];
       const result = (
@@ -241,11 +245,17 @@ export const getAllOrders = async (req, res) => {
 
 export const getFinishedOrders = async (req, res) => {
   try {
+    const { id } = req.user;
     const { first_date, second_date } = req.body;
     const sql1 = `SELECT * FROM finished_orders WHERE finished_date BETWEEN '${first_date}' AND '${second_date}'`;
+    const sql2 = `SELECT uid, permission FROM users WHERE id = ${id}`;
     const conn = await mysql.createConnection(
       production ? dataBaseConfigProduction : dataBaseConfig
     );
+    const permission = (await conn.query(sql2))[0][0]["permission"];
+    if (permission === "false") {
+      return res.status(403).json({ message: "Отказано в доступе!" });
+    }
     const result = (await conn.query(sql1))[0];
     await Promise.all(
       result.map(async (item) => {
