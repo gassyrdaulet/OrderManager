@@ -421,6 +421,7 @@ export const processOrder = async (req, res) => {
           is_kaspi: order.is_kaspi,
           comment: order.comment,
           order_code: order.order_code,
+          order_id: order.order_id,
         });
         await conn.end();
         return res.status(200).json({ message: `(${uid})` });
