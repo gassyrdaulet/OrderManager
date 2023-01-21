@@ -247,7 +247,7 @@ export const getFinishedOrders = async (req, res) => {
   try {
     const { id } = req.user;
     const { first_date, second_date } = req.body;
-    const sql1 = `SELECT * FROM finished_orders WHERE created_date BETWEEN '${first_date}' AND '${second_date}'`;
+    const sql1 = `SELECT * FROM finished_orders WHERE creation_date BETWEEN '${first_date}' AND '${second_date}'`;
     const sql2 = `SELECT uid, permission FROM users WHERE id = ${id}`;
     const conn = await mysql.createConnection(
       production ? dataBaseConfigProduction : dataBaseConfig
