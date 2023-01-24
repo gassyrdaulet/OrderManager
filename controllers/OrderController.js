@@ -361,7 +361,6 @@ export const processOrder = async (req, res) => {
     );
     const sql1 = `SELECT * FROM orders WHERE ?`;
     const order = (await conn.query(sql1, { uid }))[0][0];
-
     if (order.status === "NEW") {
       if (operation === "cancel") {
         if (user_uid !== order.manager) {
@@ -387,6 +386,10 @@ export const processOrder = async (req, res) => {
     if (order.status === "INDLVR") {
       let finalStatus = "";
       if (operation === "cancel") {
+        if (role !== "admin") {
+          await conn.end();
+          return res.status(403).json({ message: "Отказано в доступе!" });
+        }
         finalStatus = "PRCANC";
       } else if (operation === "finish") {
         finalStatus = "PRFNSH";
@@ -499,6 +502,7 @@ export const processOrder = async (req, res) => {
     await conn.end();
     res.status(400).json({ message: `(${uid})` });
   } catch (e) {
+    console.log(e);
     res.status(500).json({ message: "Ошибка сервера: " + e });
   }
 };
