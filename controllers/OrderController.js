@@ -491,6 +491,7 @@ export const processOrder = async (req, res) => {
         status: "FDDLVR",
         creation_date: order.creation_date,
         finished_date: order.finished_date,
+        payoff_date: new Date(),
         manager: order.manager,
         deliver: order.deliver,
         is_kaspi: order.is_kaspi,
