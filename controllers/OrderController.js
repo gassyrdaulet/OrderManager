@@ -430,7 +430,10 @@ export const processOrder = async (req, res) => {
         return res.status(200).json({ message: `(${uid})` });
       }
       const sql6 = `UPDATE orders SET ? WHERE uid = ${uid}`;
-      await conn.query(sql6, { status: finalStatus });
+      await conn.query(sql6, {
+        status: finalStatus,
+        finished_date: new Date(),
+      });
       await conn.end();
       return res.status(200).json({ message: `(${uid})` });
     }
@@ -487,7 +490,7 @@ export const processOrder = async (req, res) => {
         sum: order.sum,
         status: "FDDLVR",
         creation_date: order.creation_date,
-        finished_date: new Date(),
+        finished_date: order.finished_date,
         manager: order.manager,
         deliver: order.deliver,
         is_kaspi: order.is_kaspi,
