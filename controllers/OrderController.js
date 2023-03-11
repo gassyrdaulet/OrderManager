@@ -490,7 +490,7 @@ export const processOrder = async (req, res) => {
         sum: order.sum,
         status: "FDDLVR",
         creation_date: order.creation_date,
-        finished_date: order.finished_date,
+        finished_date: order.finished_date ? order.finished_date : new Date(),
         payoff_date: new Date(),
         manager: order.manager,
         deliver: order.deliver,
