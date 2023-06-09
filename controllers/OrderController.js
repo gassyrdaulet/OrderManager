@@ -37,6 +37,12 @@ export const createNewOrder = async (req, res) => {
       await conn.end();
       return res.status(400).json({ message: "Ошибка!", errors });
     }
+    if (true) {
+      await conn.end();
+      return res
+        .status(400)
+        .json({ message: "Ошибка! Создание новых заказов ограничено." });
+    }
     const checkForUniqueOrderId = async () => {
       const nanoid = customAlphabet("1234567890", 8);
       const order_uid = nanoid();
